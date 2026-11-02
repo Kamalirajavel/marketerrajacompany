@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification | Marketer Raja</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background: #000c24; color: #e8f4ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .portal-box { background: rgba(2, 18, 51, 0.9); padding: 40px; border: 1px solid #00f5ff; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 245, 255, 0.15); width: 100%; max-width: 400px; }
+    h2 { font-family: 'Orbitron', monospace; color: #00f5ff; text-align: center; margin-bottom: 25px; letter-spacing: 2px; }
+    input { width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,245,255,0.3); color: #fff; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Share Tech Mono', monospace; }
+    input:focus { border-color: #00f5ff; }
+    button { width: 100%; padding: 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Orbitron', monospace; transition: 0.3s; margin-bottom: 10px; }
+    .btn-primary { background: #25D366; color: #fff; box-shadow: 0 4px 15px rgba(37,211,102,0.3); }
+    .btn-primary:hover { background: #20b958; transform: translateY(-2px); }
+    .btn-secondary { background: #00f5ff; color: #000; box-shadow: 0 4px 15px rgba(0,245,255,0.3); }
+    .btn-secondary:hover { background: #00c2cc; transform: translateY(-2px); }
+    #status-msg { text-align: center; min-height: 20px; font-size: 14px; word-break: break-word; }
+  </style>
+</head>
+<body>
+
+  <div class="portal-box">
+    <h2>PHONE VERIFICATION</h2>
+
+    <div id="phone-step">
+      <input type="tel" id="phone-input" placeholder="Enter mobile number" maxlength="10" required>
+      <button id="send-otp-btn" class="btn-primary">SEND OTP</button>
+    </div>
+
+    <div id="otp-step" style="display: none;">
+      <p style="text-align: center; color: #00ff88; font-size: 14px; margin-bottom: 15px;">OTP sent successfully!</p>
+      <input type="text" id="otp-input" placeholder="Enter OTP" maxlength="6" required>
+      <button id="verify-otp-btn" class="btn-secondary">VERIFY OTP</button>
+    </div>
+
+    <div id="status-msg"></div>
+  </div>
+
+  <script>
+    // OTP handling is fully proxied through our own backend (Vercel).
+    // No Message Central credentials live in this file.
+    const SEND_OTP_ENDPOINT = "https://marketerraja-backend.vercel.app/api/send-otp";
+    const VERIFY_OTP_ENDPOINT = "https://marketerraja-backend.vercel.app/api/verify-otp";
+
+    let savedVerificationId = null;
+    const statusMsg = document.getElementById('status-msg');
+    const phoneInput = document.getElementById('phone-input');
+    const otpInput = document.getElementById('otp-input');
+    const phoneStep = document.getElementById('phone-step');
+    const otpStep = document.getElementById('otp-step');
+
+    function setStatus(message, color) {
+      statusMsg.style.color = color;
+      statusMsg.innerText = message;
+    }
+
+    async function callApi(endpoint, payload) {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const rawText = await response.text();
+      let result;
+      try {
+        result = JSON.parse(rawText);
+      } catch {
+        throw new Error(`Non-JSON response (status ${response.status}): ${rawText.slice(0, 200)}`);
+      }
+      return { response, result };
+    }
+
+    // 1. Send OTP
+    document.getElementById('send-otp-btn').addEventListener('click', async () => {
+      const phone = phoneInput.value.trim();
+      if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+        setStatus("Please enter a valid 10-digit mobile number.", "#ff0080");
+        return;
+      }
+
+      setStatus("Sending OTP...", "#00f5ff");
+
+      try {
+        const { result } = await callApi(SEND_OTP_ENDPOINT, { phone });
+
+        if (result.success) {
+          savedVerificationId = result.verificationId;
+          phoneStep.style.display = 'none';
+          otpStep.style.display = 'block';
+          setStatus("", "#00f5ff");
+        } else {
+          const hint = result.hint ? ` (${result.hint})` : '';
+          setStatus((result.error || "Failed to send OTP.") + hint, "#ff0080");
+          console.error("Full error response:", result);
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Network request failed.", "#ff0080");
+      }
+    });
+
+    // 2. Verify OTP
+    document.getElementById('verify-otp-btn').addEventListener('click', async () => {
+      const code = otpInput.value.trim();
+      const phone = phoneInput.value.trim();
+
+      if (code.length < 4) {
+        setStatus("Please enter the OTP code.", "#ff0080");
+        return;
+      }
+
+      setStatus("Verifying code...", "#00f5ff");
+
+      try {
+        const { result } = await callApi(VERIFY_OTP_ENDPOINT, {
+          phone,
+          code,
+          verificationId: savedVerificationId
+        });
+
+        if (result.success) {
+          otpStep.style.display = 'none';
+          setStatus("SUCCESS! Phone number verified.", "#00ff88");
+        } else {
+          setStatus(result.error || "Invalid OTP. Please try again.", "#ff0080");
+          console.error("Full error response:", result);
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Verification network error.", "#ff0080");
+      }
+    });
+  </script>
+</body>
+</html>

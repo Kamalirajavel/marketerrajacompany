@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Marketer Raja</title>
+
+  <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2050616198866655');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2050616198866655&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+  
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000c24; color: #fff; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+    .login-box { background: #021233; padding: 40px; border-radius: 8px; border: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.2); width: 100%; max-width: 350px; text-align: center; margin: auto; }
+    button { width: 100%; padding: 12px; background: #00f5ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; transition: 0.3s; }
+    button:hover { background: #00c2cc; }
+    .hidden { display: none; }
+    .dashboard-box { background: #021233; padding: 30px; border-radius: 8px; border: 1px solid #00f5ff; width: 95%; max-width: 1100px; margin: 40px auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,245,255,0.2); padding-bottom: 15px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(0,0,0,0.3); }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,245,255,0.1); color: #e8f4ff; }
+    th { background: rgba(0,245,255,0.1); color: #00f5ff; }
+    input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; font-family: inherit; }
+    .metric-row { display: flex; gap: 10px; margin-bottom: 5px; }
+    .action-btn { padding: 6px 12px; font-size: 12px; margin: 2px; width: auto;}
+    .del-btn { background: #ff0080; color: white; }
+    .edit-btn { background: #ffd700; color: black; }
+  </style>
+
+  
+      <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PVT7RG64');</script>
+<!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18263250784"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-18263250784');
+</script>
+
+  
+</head>
+<body>
+
+  <div id="login-section" class="login-box">
+    <h2 style="color: #00f5ff; margin-bottom: 20px;">SYSTEM LOGIN</h2>
+    <p style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Secured by Google Auth</p>
+    <button id="google-login-btn" style="background: white; color: black;">
+      <img src="https://developers.google.com/identity/images/g-logo.png" style="width: 18px; vertical-align: middle; margin-right: 8px;"> 
+      Sign in with Google
+    </button>
+    <p id="error-msg" style="color: #ff0080; font-size: 14px; margin-top: 15px;"></p>
+  </div>
+
+  <div id="admin-dashboard" class="dashboard-box hidden">
+    <div class="header">
+      <h2 style="color: #00f5ff; margin: 0;">MARKETER RAJA // ADMIN CONSOLE</h2>
+      <button id="logout-btn" style="width: auto; background: #ff0080; color: white;">LOG OUT</button>
+    </div>
+    
+    <h3 style="color: #ffd700;">Recent Client Enquiries</h3>
+    <div style="overflow-x: auto; margin-bottom: 40px;">
+      <table>
+        <thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Service</th><th>Budget</th><th>Source</th><th>How Found Us</th><th>Purpose</th><th>Action</th></tr></thead>
+        <tbody id="enquiry-list"><tr><td colspan="9" style="text-align: center;">Loading data...</td></tr></tbody>
+      </table>
+    </div>
+
+    <h3 style="color: #00ff88; margin-top: 40px; border-top: 1px solid rgba(0,245,255,0.2); padding-top: 20px;">Manage Portfolio Elements</h3>
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 40px;">
+      
+      <div style="flex: 1; min-width: 300px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(0,255,136,0.3);">
+        <h3 id="form-title" style="color: #00ff88; margin-top: 0;">+ Add New Portfolio Item</h3>
+        <form id="portfolio-form">
+          <input type="hidden" id="pf-id">
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="pf-name" placeholder="Client Name" required style="flex: 2;">
+            <input type="text" id="pf-icon" placeholder="Icon (e.g. 🏢)" required style="flex: 1;">
+          </div>
+          <input type="text" id="pf-industry" placeholder="Industry (e.g. B2B)" required>
+          <input type="number" id="pf-graph" placeholder="Graph Volume (Number for Donut Chart)" required>
+          <input type="text" id="pf-status" placeholder="Status Badge (e.g. ACTIVE)" required>
+          
+          <h4 style="color: #00f5ff; margin-bottom: 5px;">Metrics</h4>
+          <div id="metrics-container">
+            <div class="metric-row">
+              <input type="text" class="m-label" placeholder="Metric Label" required>
+              <input type="text" class="m-value" placeholder="Metric Value" required>
+            </div>
+          </div>
+          <button type="button" id="add-metric-btn" style="background: transparent; border: 1px dashed #00f5ff; color: #00f5ff; padding: 8px;">+ Add Another Metric</button>
+          <button type="submit" id="save-pf-btn" style="background: #00ff88; color: black; margin-top: 20px;">SAVE PORTFOLIO</button>
+        </form>
+      </div>
+
+      <div style="flex: 1; min-width: 300px;">
+        <div style="overflow-x: auto;">
+          <table>
+            <thead><tr><th>Client</th><th>Volume</th><th>Actions</th></tr></thead>
+            <tbody id="portfolio-list"><tr><td colspan="3">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="color: #ff0080; margin-top: 40px; border-top: 1px solid rgba(0,245,255,0.2); padding-top: 20px;">Manage Blog Posts</h3>
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 40px;">
+      
+      <div style="flex: 1; min-width: 300px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,0,128,0.3);">
+        <h3 id="blog-form-title" style="color: #ff0080; margin-top: 0;">+ Add New Blog Post</h3>
+        <form id="blog-form">
+          <input type="hidden" id="blog-id">
+          <input type="text" id="blog-title" placeholder="Post Title" required>
+          <input type="text" id="blog-author" placeholder="Author Name" required>
+          <input type="text" id="blog-thumb" placeholder="Thumbnail Image URL (e.g., https://.../image.jpg)" required>
+          <textarea id="blog-content" rows="8" placeholder="Write your blog content here... (You can use simple HTML like <b>bold</b> or <br> for new lines)" required></textarea>
+          
+          <button type="submit" id="save-blog-btn" style="background: #ff0080; color: white; margin-top: 20px;">PUBLISH POST</button>
+        </form>
+      </div>
+
+      <div style="flex: 1; min-width: 300px;">
+        <div style="overflow-x: auto;">
+          <table>
+            <thead><tr><th>Date</th><th>Title</th><th>Actions</th></tr></thead>
+            <tbody id="blog-list"><tr><td colspan="3">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="color: #00f5ff; margin-top: 40px; border-top: 1px solid rgba(0,245,255,0.2); padding-top: 20px;">Newsletter Subscribers</h3>
+    <div style="overflow-x: auto; margin-bottom: 40px;">
+      <table>
+        <thead><tr><th>Email</th><th>Subscribed Date</th></tr></thead>
+        <tbody id="subscriber-list"><tr><td colspan="2" style="text-align: center;">Loading data...</td></tr></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { auth, provider, db } from "./firebase-config.js";
+    import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    // Auth Logic
+    document.getElementById('google-login-btn').addEventListener('click', async () => {
+      document.getElementById('error-msg').textContent = "Authenticating...";
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        document.getElementById('error-msg').textContent = "Login failed: " + err.message;
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+
+    // Strict Frontend Enforcement
+/*onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    if (user.email === 'marketerraja11@gmail.com') {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('admin-dashboard').classList.remove('hidden');
+      fetchData();
+    } else {
+      document.getElementById('error-msg').textContent = "ACCESS DENIED: Unauthorized administrator email.";
+      await signOut(auth);
+    }
+  } else {
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('admin-dashboard').classList.add('hidden');
+  }
+});*/
+
+    // Secure Auth Logic with Email Verification
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Verify if the logged-in email matches your admin email exactly
+        if (user.email === 'marketerraja11@gmail.com') {
+          document.getElementById('error-msg').textContent = ""; // Clear any previous error messages
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('admin-dashboard').classList.remove('hidden');
+          fetchData();
+        } else {
+          // If any other email logs in, display an alert, reject access, and force a logout
+          document.getElementById('error-msg').textContent = "ACCESS DENIED: Unauthorized administrator email (" + user.email + ").";
+          await signOut(auth);
+        }
+      } else {
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('admin-dashboard').classList.add('hidden');
+      }
+    });
+
+    
+
+    // Dynamic Metrics UI (Portfolio)
+    document.getElementById('add-metric-btn').addEventListener('click', () => {
+      const container = document.getElementById('metrics-container');
+      const row = document.createElement('div');
+      row.className = 'metric-row';
+      row.innerHTML = `<input type="text" class="m-label" placeholder="Metric Label" required> <input type="text" class="m-value" placeholder="Metric Value" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+      container.appendChild(row);
+    });
+
+    // Data Fetching Function
+   //function fetchData() {
+      // 1. Fetch Enquiries
+     /* const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+      onSnapshot(qE, (snapE) => {
+        const listE = document.getElementById('enquiry-list');
+        if(listE) {
+          listE.innerHTML = '';
+          if (snapE.empty) listE.innerHTML = `<tr><td colspan="5" style="text-align: center;">No enquiries yet.</td></tr>`;
+          snapE.forEach(d => {
+            const data = d.data();
+            listE.innerHTML += `<tr>
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${data.name}</td>
+              <td>${data.contact}</td>
+              <td>${data.service}</td>
+              <td>${data.budget}</td>
+            </tr>`;
+          });
+        }
+      });
+
+      // 2. Fetch Portfolio List
+      const qP = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+      getDocs(qP).then((snapP) => {
+        const listP = document.getElementById('portfolio-list');
+        if(listP) {
+          listP.innerHTML = '';
+          if (snapP.empty) listP.innerHTML = `<tr><td colspan="3" style="text-align: center;">No portfolio items yet.</td></tr>`;
+          snapP.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${data.name}</td><td>${data.graphVolume}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listP.appendChild(tr);
+
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('pf-id').value = d.id;
+              document.getElementById('pf-name').value = data.name;
+              document.getElementById('pf-icon').value = data.icon;
+              document.getElementById('pf-industry').value = data.industry;
+              document.getElementById('pf-graph').value = data.graphVolume;
+              document.getElementById('pf-status').value = data.status;
+              document.getElementById('form-title').textContent = "✏️ Edit Portfolio Item";
+              document.getElementById('save-pf-btn').textContent = "UPDATE PORTFOLIO";
+              const container = document.getElementById('metrics-container');
+              container.innerHTML = '';
+              if(data.metrics) {
+                data.metrics.forEach(m => {
+                  const row = document.createElement('div');
+                  row.className = 'metric-row';
+                  row.innerHTML = `<input type="text" class="m-label" value="${m.label}" required> <input type="text" class="m-value" value="${m.value}" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+                  container.appendChild(row);
+                });
+              }
+            });
+
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Delete this portfolio project?")) {
+                await deleteDoc(doc(db, "portfolio", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
+
+      // 3. Fetch Blog List
+      const qB = query(collection(db, "blog"), orderBy("timestamp", "desc"));
+      getDocs(qB).then((snapB) => {
+        const listB = document.getElementById('blog-list');
+        if(listB) {
+          listB.innerHTML = '';
+          if (snapB.empty) listB.innerHTML = `<tr><td colspan="3" style="text-align: center;">No blog posts yet.</td></tr>`;
+          snapB.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${data.title}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listB.appendChild(tr);
+
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('blog-id').value = d.id;
+              document.getElementById('blog-title').value = data.title;
+              document.getElementById('blog-author').value = data.author;
+              document.getElementById('blog-thumb').value = data.thumbnail;
+              document.getElementById('blog-content').value = data.content;
+              document.getElementById('blog-form-title').textContent = "✏️ Edit Blog Post";
+              document.getElementById('save-blog-btn').textContent = "UPDATE POST";
+            });
+
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Are you sure you want to delete this blog post?")) {
+                await deleteDoc(doc(db, "blog", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
+
+      // 4. Fetch Subscribers List
+      const qS = query(collection(db, "subscribers"), orderBy("subscribedAt", "desc"));
+      onSnapshot(qS, (snapS) => {
+        const listS = document.getElementById('subscriber-list');
+        if(listS) {
+          listS.innerHTML = '';
+          if (snapS.empty) listS.innerHTML = `<tr><td colspan="2" style="text-align: center;">No subscribers yet.</td></tr>`;
+          snapS.forEach(d => {
+            const data = d.data();
+            listS.innerHTML += `<tr>
+              <td>${data.email}</td>
+              <td>${data.subscribedAt ? new Date(data.subscribedAt.toDate()).toLocaleDateString() : 'New'}</td>
+            </tr>`;
+          });
+        }
+      });
+    }
+
+    // Save Portfolio Logic
+    document.getElementById('portfolio-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-pf-btn');
+      btn.textContent = "SAVING...";
+      const metrics = [];
+      document.querySelectorAll('.metric-row').forEach(row => {
+        const label = row.querySelector('.m-label').value;
+        const value = row.querySelector('.m-value').value;
+        if (label && value) metrics.push({ label, value });
+      });
+      const portfolioData = {
+        name: document.getElementById('pf-name').value,
+        icon: document.getElementById('pf-icon').value,
+        industry: document.getElementById('pf-industry').value,
+        graphVolume: document.getElementById('pf-graph').value,
+        status: document.getElementById('pf-status').value.toUpperCase(),
+        metrics: metrics
+      };
+      const editId = document.getElementById('pf-id').value;
+      try {
+        if (editId) { 
+          await updateDoc(doc(db, "portfolio", editId), portfolioData); 
+        } else { 
+          portfolioData.timestamp = serverTimestamp(); 
+          await addDoc(collection(db, "portfolio"), portfolioData); 
+        }
+        e.target.reset();
+        document.getElementById('pf-id').value = '';
+        document.getElementById('form-title').textContent = "+ Add New Portfolio Item";
+        btn.textContent = "SAVE PORTFOLIO";
+        document.getElementById('metrics-container').innerHTML = `<div class="metric-row"><input type="text" class="m-label" placeholder="Metric Label" required> <input type="text" class="m-value" placeholder="Metric Value" required></div>`;
+        fetchData(); 
+      } catch (err) { alert("Error: " + err.message); btn.textContent = "SAVE PORTFOLIO"; }
+    });
+
+    // Save Blog Logic
+    document.getElementById('blog-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-blog-btn');
+      btn.textContent = "PUBLISHING...";
+      
+      const blogData = {
+        title: document.getElementById('blog-title').value,
+        author: document.getElementById('blog-author').value,
+        thumbnail: document.getElementById('blog-thumb').value,
+        content: document.getElementById('blog-content').value
+      };
+      
+      const editId = document.getElementById('blog-id').value;
+
+      try {
+        if (editId) { 
+          await updateDoc(doc(db, "blog", editId), blogData); 
+        } else { 
+          blogData.timestamp = serverTimestamp(); 
+          await addDoc(collection(db, "blog"), blogData); 
+        }
+        e.target.reset();
+        document.getElementById('blog-id').value = '';
+        document.getElementById('blog-form-title').textContent = "+ Add New Blog Post";
+        btn.textContent = "PUBLISH POST";
+        fetchData(); 
+      } catch (err) { 
+        alert("Error: " + err.message); 
+        btn.textContent = "PUBLISH POST"; 
+      }
+    });
+    
+    // Save Blog Logic & Brevo Email Trigger
+    // NOTE: The Brevo API key now lives ONLY on the server (Vercel env var).
+    // Replace this URL with your actual deployed Vercel function URL.
+    const EMAIL_API_ENDPOINT = "https://marketerraja-backend.vercel.app/api/send-blog-email";
+
+    document.getElementById('blog-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-blog-btn');
+      btn.textContent = "PUBLISHING...";
+      
+      // Grab values using your EXACT HTML IDs
+      const titleInput = document.getElementById('blog-title').value;
+      const authorInput = document.getElementById('blog-author').value;
+      const thumbInput = document.getElementById('blog-thumb').value;
+      const contentInput = document.getElementById('blog-content').value;
+      const editId = document.getElementById('blog-id').value;
+
+      const blogData = {
+        title: titleInput,
+        author: authorInput,
+        thumbnail: thumbInput,
+        content: contentInput
+      };
+
+      try {
+        let isNewPost = false; // We use this to check if we should send emails
+
+        // 1. SAVE OR UPDATE THE BLOG POST IN FIREBASE
+        if (editId) { 
+          // If editing an old post, just update it (no emails)
+          await updateDoc(doc(db, "blog", editId), blogData); 
+        } else { 
+          // If brand new post, save it and trigger email flag
+          blogData.timestamp = serverTimestamp(); 
+          await addDoc(collection(db, "blog"), blogData); 
+          isNewPost = true;
+        }
+
+        // 2. TRIGGER EMAILS ONLY IF IT IS A BRAND NEW POST
+        if (isNewPost) {
+          const subSnapshot = await getDocs(collection(db, "subscribers"));
+          const bccList = [];
+          
+          subSnapshot.forEach((doc) => {
+            if (doc.data().email) {
+              bccList.push({ email: doc.data().email });
+            }
+          });
+
+          if (bccList.length > 0) {
+            const liveBlogUrl = "https://marketerraja.com/blog.html"; 
+
+            // Send to our own serverless proxy (key stays server-side there)
+            const response = await fetch(EMAIL_API_ENDPOINT, {
+              method: "POST",
+              headers: {
+                "content-type": "application/json"
+              },
+              body: JSON.stringify({
+                title: titleInput,
+                bccList: bccList,
+                liveBlogUrl: liveBlogUrl
+              })
+            });
+
+            if (response.ok) {
+              alert("Blog published and subscribers notified!");
+            } else {
+              const errData = await response.json();
+              console.error("Email proxy error:", errData);
+              alert("Blog saved, but email failed to send. Check console.");
+            }
+          } else {
+            alert("Blog published! (No subscribers to email yet).");
+          }
+        } else {
+          alert("Blog updated successfully! (No emails sent for edits).");
+        }
+
+        // 3. RESET THE FORM
+        e.target.reset();
+        document.getElementById('blog-id').value = '';
+        document.getElementById('blog-form-title').textContent = "+ Add New Blog Post";
+        btn.textContent = "PUBLISH POST";
+        fetchData(); 
+
+      } catch (err) { 
+        console.error(err);
+        alert("Error: " + err.message); 
+        btn.textContent = "PUBLISH POST"; 
+      }
+    });*/
+
+
+    // Escape user-submitted text before putting it into the page
+    const esc = (v) => String(v ?? '-').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Data Fetching Function
+    function fetchData() {
+      // 1. Fetch Enquiries with Dynamic Eviction Controls
+      const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+      onSnapshot(qE, (snapE) => {
+        const listE = document.getElementById('enquiry-list');
+        if(listE) {
+          listE.innerHTML = '';
+          if (snapE.empty) listE.innerHTML = `<tr><td colspan="9" style="text-align: center;">No enquiries yet.</td></tr>`;
+          snapE.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${esc(data.name)}</td>
+              <td>${esc(data.contact)}</td>
+              <td>${esc(data.service)}</td>
+              <td>${esc(data.budget)}</td>
+              <td>${esc(data.source || 'Homepage Form')}</td>
+              <td>${esc(data.heardFrom)}</td>
+              <td>${esc(data.purpose)}</td>
+              <td>
+                <button class="action-btn del-btn" style="background: #ff0080; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            `;
+            listE.appendChild(tr);
+
+            // Active Database Purge Listener
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm(`Are you sure you want to permanently delete the enquiry from ${data.name}?`)) {
+                try {
+                  await deleteDoc(doc(db, "enquiries", d.id));
+                } catch (err) {
+                  alert("Security configuration error: " + err.message);
+                }
+              }
+            });
+          });
+        }
+      });
+
+      // 2. Fetch Portfolio List (Keep your exact portfolio code block here)
+      const qP = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+      getDocs(qP).then((snapP) => {
+        const listP = document.getElementById('portfolio-list');
+        if(listP) {
+          listP.innerHTML = '';
+          if (snapP.empty) listP.innerHTML = `<tr><td colspan="3" style="text-align: center;">No portfolio items yet.</td></tr>`;
+          snapP.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${data.name}</td><td>${data.graphVolume}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listP.appendChild(tr);
+
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('pf-id').value = d.id;
+              document.getElementById('pf-name').value = data.name;
+              document.getElementById('pf-icon').value = data.icon;
+              document.getElementById('pf-industry').value = data.industry;
+              document.getElementById('pf-graph').value = data.graphVolume;
+              document.getElementById('pf-status').value = data.status;
+              document.getElementById('form-title').textContent = "✏️ Edit Portfolio Item";
+              document.getElementById('save-pf-btn').textContent = "UPDATE PORTFOLIO";
+              const container = document.getElementById('metrics-container');
+              container.innerHTML = '';
+              if(data.metrics) {
+                data.metrics.forEach(m => {
+                  const row = document.createElement('div');
+                  row.className = 'metric-row';
+                  row.innerHTML = `<input type="text" class="m-label" value="${m.label}" required> <input type="text" class="m-value" value="${m.value}" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+                  container.appendChild(row);
+                });
+              }
+            });
+
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Delete this portfolio project?")) {
+                await deleteDoc(doc(db, "portfolio", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
+
+      // 3. Fetch Blog List (Keep your exact blog code block here)
+      const qB = query(collection(db, "blog"), orderBy("timestamp", "desc"));
+      getDocs(qB).then((snapB) => {
+        const listB = document.getElementById('blog-list');
+        if(listB) {
+          listB.innerHTML = '';
+          if (snapB.empty) listB.innerHTML = `<tr><td colspan="3" style="text-align: center;">No blog posts yet.</td></tr>`;
+          snapB.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${data.title}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listB.appendChild(tr);
+
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('blog-id').value = d.id;
+              document.getElementById('blog-title').value = data.title;
+              document.getElementById('blog-author').value = data.author;
+              document.getElementById('blog-thumb').value = data.thumbnail;
+              document.getElementById('blog-content').value = data.content;
+              document.getElementById('blog-form-title').textContent = "✏️ Edit Blog Post";
+              document.getElementById('save-blog-btn').textContent = "UPDATE POST";
+            });
+
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Are you sure you want to delete this blog post?")) {
+                await deleteDoc(doc(db, "blog", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
+
+      // 4. Fetch Newsletter Subscribers with Dynamic Eviction Controls
+      const qS = query(collection(db, "subscribers"), orderBy("subscribedAt", "desc"));
+      onSnapshot(qS, (snapS) => {
+        const listS = document.getElementById('subscriber-list');
+        if(listS) {
+          listS.innerHTML = '';
+          if (snapS.empty) listS.innerHTML = `<tr><td colspan="3" style="text-align: center;">No subscribers yet.</td></tr>`;
+          snapS.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.email}</td>
+              <td>${data.subscribedAt ? new Date(data.subscribedAt.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>
+                <button class="action-btn del-btn" style="background: #ff0080; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            `;
+            listS.appendChild(tr);
+
+            // Active Database Purge Listener
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm(`Remove subscription records for ${data.email}?`)) {
+                try {
+                  await deleteDoc(doc(db, "subscribers", d.id));
+                } catch (err) {
+                  alert("Security configuration error: " + err.message);
+                }
+              }
+            });
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
